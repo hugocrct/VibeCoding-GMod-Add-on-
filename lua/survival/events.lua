@@ -1,29 +1,30 @@
--- EVENT SYSTEM
-
-EventSystem = {}
+EventSystem = EventSystem or {}
 
 EventSystem.events = {
+
     function(player)
-        print("[Esdeveniment] Trobes menjar")
+        print("[EVENT] Trobes menjar")
         player.gana = math.min(player.gana + 15, 100)
     end,
 
     function(player)
-        print("[Esdeveniment] Atac enemic")
+        print("[EVENT] Atac enemic")
         player.salut = math.max(player.salut - 20, 0)
     end,
 
     function(player)
-        print("[Esdeveniment] Descanses una mica")
+        print("[EVENT] Descanses")
         player.energia = math.min(player.energia + 10, 100)
     end
 }
 
-function EventSystem:triggerRandom(player)
-    local probabilitat = math.random(1, 100)
-
-    if probabilitat <= 30 then
+function EventSystem:triggerRandom(game)
+    if math.random(1, 100) <= 30 then
         local event = table.Random(self.events)
-        event(player)
+
+        game.currentEvent = event
+        game:setState("EVENT")
+
+        print("[EVENT] Activat")
     end
 end

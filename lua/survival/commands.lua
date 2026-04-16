@@ -1,6 +1,11 @@
 -- COMMAND HANDLER
-
+print("[DEBUG] commands.lua carregat")
 concommand.Add("sg_iniciar", function()
+    if not GAME then
+        print("[ERROR] GAME no existe aún (fallo de carga)")
+        return
+    end
+
     GAME:start()
 end)
 
@@ -45,5 +50,16 @@ concommand.Add("sg_set_stat", function(_, _, args)
         print("[TEST] " .. stat .. " canviat a " .. valor)
     else
         print("[TEST] Ús: sg_set_stat <salut|gana|energia> <valor>")
+    end
+end)
+concommand.Add("event_1", function()
+    if GAME and GAME.gameState == "EVENT" then
+        GAME:resolveEvent(1)
+    end
+end)
+
+concommand.Add("event_2", function()
+    if GAME and GAME.gameState == "EVENT" then
+        GAME:resolveEvent(2)
     end
 end)
