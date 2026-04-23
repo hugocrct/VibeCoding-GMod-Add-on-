@@ -108,3 +108,109 @@ Projecte viable en 10 hores perquè:
 - Visual Studio Code
 - GitHub
 - Console del joc
+
+---
+
+# 🔵 FASE 2 — Disseny tècnic
+
+## 🧱 Diagrama de classes
+
+```mermaid
+classDiagram
+
+class GameManager {
+  -gameState
+  -score
+  -currentEvent
+  +startGame()
+  +update()
+  +endGame()
+}
+
+class PlayerStats {
+  -health
+  -hunger
+  -energy
+  +updateStats()
+  +isAlive()
+}
+
+class TickSystem {
+  -interval
+  +startTick()
+  +stopTick()
+  +applyTick()
+}
+
+class ActionSystem {
+  +eat()
+  +sleep()
+  +explore()
+}
+
+class EventSystem {
+  +triggerEvent()
+  +applyEffect()
+}
+
+class HUD {
+  +render()
+  +updateUI()
+}
+
+GameManager --> PlayerStats
+GameManager --> TickSystem
+GameManager --> ActionSystem
+GameManager --> EventSystem
+GameManager --> HUD
+
+TickSystem --> PlayerStats
+ActionSystem --> PlayerStats
+EventSystem --> PlayerStats
+HUD --> PlayerStats
+```
+
+L’arquitectura separa clarament les responsabilitats. `GameManager` coordina el flux global del joc. `PlayerStats` controla l’estat vital del jugador. `TickSystem` regula el pas del temps i la degradació de recursos. `ActionSystem` encapsula les accions disponibles. `EventSystem` introdueix variabilitat i risc. `HUD` mostra l’estat al jugador. Aquesta estructura facilita el manteniment i permet ampliar el joc sense trencar la lògica existent.
+
+---
+
+## 🔄 Diagrama de comportament
+
+```mermaid
+flowchart TD
+
+A[Start Game] --> B[Inicialitzar GameManager]
+B --> C[Iniciar TickSystem]
+
+C --> D[Aplicar Tick: baixar stats]
+D --> E{Jugador tria acció}
+
+E -->|Menjar| F[Aplicar efectes]
+E -->|Dormir| G[Aplicar efectes]
+E -->|Explorar| H[Resultat aleatori]
+
+F --> I[Actualizar stats]
+G --> I
+H --> I
+
+I --> J{Event aleatori?}
+
+J -->|Sí| K[Trigger Event]
+J -->|No| L[Continuar]
+
+K --> M[Aplicar efecte]
+M --> N[Actualizar stats]
+
+L --> N
+
+N --> O[Actualizar score]
+
+O --> P{Salut > 0?}
+
+P -->|Sí| D
+P -->|No| Q[Game Over]
+
+Q --> R[Mostrar resultats]
+```
+
+El joc funciona en un bucle continu basat en ticks. Cada iteració redueix les estadístiques i obliga el jugador a prendre decisions. Les accions poden modificar l’estat i activar esdeveniments aleatoris. Després de cada cicle es comprova la supervivència. Si la salut arriba a zero, el joc finalitza. Aquest flux manté una pressió constant i converteix la gestió de recursos en el centre del gameplay.
