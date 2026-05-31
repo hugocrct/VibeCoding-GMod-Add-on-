@@ -15,34 +15,45 @@ local function FindSpawnPoint(ply, min_dist, max_dist)
             mins = Vector(-16, -16, 0), maxs = Vector(16, 16, 72), filter = ply
         })
         
-        -- EVITA SPAWNEAR ENCIMA DEL JUGADOR: Si choca cerca de ti, lo ignora y busca otro lado
-        if trHorizontal.Hit and trHorizontal.HitPos:Distance(plyPos) < 120 then
-            continue
-        end
-
-        local safePos = trHorizontal.HitPos
-        if trHorizontal.Hit then safePos = safePos - trHorizontal.Normal * 35 end
-        
-        local trVertical = util.TraceHull({
-            start = safePos, endpos = safePos - Vector(0, 0, 600),
-            mins = Vector(-16, -16, 0), maxs = Vector(16, 16, 72), filter = ply
-        })
-        
-        local spawnPos = trVertical.HitPos + Vector(0, 0, 10)
-        
-        -- Doble comprobación: Suelo sólido Y debe estar lejos de ti
-        if trVertical.Hit and not trVertical.StartSolid and util.IsInWorld(spawnPos) then
-            if spawnPos:Distance(plyPos) >= 120 then
-                return spawnPos
+        -- EVITA SPAWNEAR ENCIMA DEL JUGADOR (Sin usar "continue")
+        if not (trHorizontal.Hit and trHorizontal.HitPos:Distance(plyPos) < 120) then
+            local safePos = trHorizontal.HitPos
+            if trHorizontal.Hit then safePos = safePos - trHorizontal.Normal * 35 end
+            
+            local trVertical = util.TraceHull({
+                start = safePos, endpos = safePos - Vector(0, 0, 600),
+                mins = Vector(-16, -16, 0), maxs = Vector(16, 16, 72), filter = ply
+            })
+            
+            local spawnPos = trVertical.HitPos + Vector(0, 0, 10)
+            
+            -- Doble comprobación: Suelo sólido Y debe estar lejos de ti
+            if trVertical.Hit and not trVertical.StartSolid and util.IsInWorld(spawnPos) then
+                if spawnPos:Distance(plyPos) >= 120 then
+                    return spawnPos
+                end
             end
         end
     end
     
-    -- FALLBACK ANTI-BUGS: Ignoramos tu inclinación visual (Z=0) para no enterrar entidades
+    -- FALLBACK ANTI-BUGS MEJORADO: Trazamos un rayo hacia adelante para no atravesar la pared que mires
     local forward = ply:GetForward()
     forward.z = 0
     forward:Normalize()
-    return plyPos + forward * 200 + Vector(0, 0, 15)
+    
+    local trFallback = util.TraceLine({
+        start = plyPos + Vector(0, 0, 32),
+        endpos = plyPos + forward * 200 + Vector(0, 0, 32),
+        filter = ply
+    })
+    
+    -- Si choca con una pared delante de ti, retrocede para dejarlo en el suelo a tus pies
+    local finalFallbackPos = trFallback.HitPos
+    if trFallback.Hit then
+        finalFallbackPos = finalFallbackPos - trFallback.Normal * 30
+    end
+    
+    return finalFallbackPos - Vector(0, 0, 20)
 end
 
 local function GetProgressiveNPC(currentMinute)
