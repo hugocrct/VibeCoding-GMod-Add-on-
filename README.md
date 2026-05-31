@@ -1,216 +1,325 @@
-# 01_idea_i_abast.md
+# Survival Decision Game: Minimal Life Loop (Progressive Chaos Edition)
 
-## 1. Títol provisional del joc
-**Survival Decision Game: Minimal Life Loop**
+## Descripció general
 
-## 2. Tipus de microvideojoc escollit
-Microvideojoc de supervivència basat en decisions i sistema de stats en temps real (tick system), desenvolupat com a addon per a Garry’s Mod utilitzant Lua.
+**Survival Decision Game: Minimal Life Loop (Progressive Chaos Edition)** és un microvideojoc de supervivència desenvolupat com a addon per a **Garry’s Mod** utilitzant **Lua** sobre **Source Engine**.
 
-## 3. Objectiu del joc
-L’objectiu del jugador és mantenir-se viu el màxim temps possible gestionant correctament les seves estadístiques bàsiques (salut, gana i energia) mitjançant accions simples i la resposta a esdeveniments aleatoris.
+El projecte combina tres pilars principals:
 
-No existeix un final narratiu ni una victòria clàssica: el repte és la supervivència sostinguda.
+* Gestió de recursos.
+* Exploració basada en moviment real.
+* Combat amb dificultat progressiva.
 
-## 4. Rol del jugador
-El jugador assumeix el rol d’un personatge sense identitat definida que ha de sobreviure en un entorn abstracte. La seva única responsabilitat és prendre decisions constants per equilibrar les seves necessitats bàsiques.
-
-## 5. Regles bàsiques
-- El jugador disposa de tres estadístiques: salut, gana i energia.
-- Les estadístiques disminueixen de manera automàtica amb el temps.
-- El jugador pot executar accions:
-  - menjar: augmenta gana i pot recuperar salut lleument
-  - dormir: recupera energia
-  - explorar: pot generar recursos o esdeveniments positius/negatius
-  - consultar estat: mostra valors actuals de les estadístiques
-- Si la gana arriba a 0, la salut comença a disminuir progressivament.
-- Esdeveniments aleatoris poden afectar qualsevol estadística.
-
-## 6. Condicions de victòria i derrota
-- **Victòria:** no existeix victòria formal.
-- **Derrota:** quan la salut arriba a 0, el joc finalitza immediatament i es mostra el temps de supervivència.
-
-## 7. Bucle principal del joc
-El bucle principal es basa en un sistema de ticks automàtics:
-
-1. Cada interval de temps (tick):
-   - Reducció de gana i energia
-   - Possible pèrdua de salut si la gana és crítica
-2. El jugador pot executar una acció en qualsevol moment via consola
-3. Es comproven condicions de supervivència
-4. Es poden activar esdeveniments aleatoris
-5. Es repeteix indefinidament fins a la derrota
-
-Aquest bucle és el nucli del gameplay i defineix el ritme del joc.
-
-## 8. Repte principal i dificultat
-El repte principal és la gestió eficient de recursos limitats sota pressió temporal constant.
-
-La dificultat augmenta de manera progressiva perquè:
-- Les estadístiques baixen contínuament
-- Els esdeveniments aleatoris introdueixen incertesa
-- Les accions tenen trade-offs (ex: dormir recupera energia però no alimenta)
-
-La complexitat és baixa però la pressió sistèmica és mitjana.
-
-## 9. Limitacions explícites
-- No hi ha multijugador
-- No hi ha inventari complex
-- No hi ha mapa ni exploració espacial real
-- No hi ha història narrativa
-- No hi ha IA avançada de NPCs
-- No hi ha gràfics complexos ni UI avançada
-- Interacció limitada a consola i HUD bàsic
-
-## 10. Riscos tècnics
-1. Desincronització del sistema de ticks
-2. Equilibrat de les estadístiques
-3. Gestió d’esdeveniments aleatoris
-
-## 11. Exploració amb IA (mínim 2 prompts + resposta resumida)
-Prompt 1:
-"Dissenya un sistema de supervivència minimalista amb tres estadístiques i tick system en Lua per Garry’s Mod."
-
-Resposta:
-Sistema basat en timers recurrents que modifiquen stats cada interval i funcions modulars per gestionar condicions de derrota.
-
-Prompt 2:
-"Com equilibrar un joc de supervivència amb gana, salut i energia?"
-
-Resposta:
-Degradació progressiva + events controlats + ajust de dificultat gradual.
-
-## 12. Proposta final escollida
-Arquitectura minimalista amb:
-- Tick system centralitzat
-- 3 estadístiques
-- Accions per consola
-- Events aleatoris
-- HUD simple
-
-## 13. Justificació de viabilitat
-Projecte viable en 10 hores perquè:
-- Lua senzill
-- Sense assets complexos
-- UI mínima
-- Lògica modular
-
-## 14. Mini pla de treball
-1. Setup addon (2h)
-2. Stats + tick system (2h)
-3. Accions consola (2h)
-4. Events aleatoris (2h)
-5. HUD (1h)
-6. Testing (1h)
-
-## 15. Eines previstes i justificació
-- Garry’s Mod
-- Lua
-- Visual Studio Code
-- GitHub
-- Console del joc
+A diferència d'altres jocs de supervivència, els recursos i esdeveniments no apareixen de manera aleatòria ni es poden activar manualment. Tot el sistema gira al voltant del moviment del jugador, incentivant l'exploració constant del mapa.
 
 ---
 
-# 🔵 FASE 2 — Disseny tècnic
+# Vídeo de gameplay
 
-## 🧱 Diagrama de classes
+🔗 **Afegir aquí l'enllaç al vídeo de gameplay**
+
+Exemple:
+
+```text
+https://youtu.be/XXXXXXXXXXX
+```
+
+---
+
+# Característiques principals
+
+## Sistema de supervivència
+
+El jugador disposa de tres estadístiques bàsiques:
+
+| Estadística | Rang    |
+| ----------- | ------- |
+| Salut       | 0 - 100 |
+| Gana        | 0 - 100 |
+| Energia     | 0 - 100 |
+
+### Degradació automàtica
+
+* La gana disminueix 1 punt cada 2 segons.
+* L'energia disminueix 1 punt cada 4 segons.
+* Si qualsevol estadística arriba a 0, el jugador mor.
+
+---
+
+## Exploració basada en moviment
+
+El sistema monitoritza constantment la distància recorreguda pel jugador.
+
+Quan s'assoleix una distància objectiu aleatòria:
+
+* Es genera un nou esdeveniment.
+* Poden aparèixer recursos.
+* Poden aparèixer enemics.
+* Es manté el ritme constant de joc.
+
+Aquesta mecànica elimina la dependència de menús o accions manuals per generar contingut.
+
+---
+
+## Recursos interactius
+
+Tots els recursos existeixen com a entitats físiques dins del món del joc.
+
+### Menjar
+
+* Recupera +35 de gana.
+* Es consumeix amb la tecla `E`.
+
+### Llits o matalassos
+
+* Recuperen +30 d'energia.
+* Requereixen interacció amb la tecla `E`.
+
+### Botiquins militars
+
+* Recuperen salut.
+* Només poden aparèixer quan el jugador té menys del 50% de salut.
+
+---
+
+## Sistema Safe Spawn Anti-Stuck
+
+Per evitar errors de col·lisió:
+
+* Fins a 10 intents de posicionament.
+* Comprovació mitjançant traces i raycasts.
+* Distància mínima de 120 unitats respecte al jugador.
+* Bloqueig d'aparicions dins de geometria sòlida.
+* Bloqueig d'aparicions sota el jugador.
+
+---
+
+## Combat i dificultat progressiva
+
+La dificultat augmenta automàticament amb el temps de partida.
+
+### Escalat de dificultat
+
+Cada minut:
+
+* Augmenta el nivell global.
+* Incrementa la salut dels enemics.
+* Augmenta el nombre d'enemics simultanis.
+* Es desbloquegen enemics més avançats.
+
+### Evolució dels enemics
+
+| Temps             | Enemics disponibles                |
+| ----------------- | ---------------------------------- |
+| Minut 0           | Headcrab, Zombie                   |
+| Minut 1           | Variants addicionals               |
+| Minut 2           | Zombie Fast                        |
+| Minut 3           | Poison Zombie                      |
+| Minut 4+          | Caps i combinacions avançades      |
+| Partides llargues | Antlion Guard i variants escalades |
+
+### Recompensa de combat
+
+Quan un enemic és eliminat:
+
+* Es reomple tota la munició de les armes del jugador.
+
+Això permet mantenir un ritme de combat continu sense dependre de recollides constants de munició.
+
+---
+
+# Condicions de joc
+
+## Victòria
+
+No existeix una victòria formal.
+
+El rendiment del jugador es mesura mitjançant:
+
+* Temps total de supervivència.
+* Minuts superats.
+* Nivell de dificultat assolit.
+
+## Derrota
+
+La partida finalitza quan:
+
+* La salut arriba a 0.
+* La gana arriba a 0.
+* L'energia arriba a 0.
+
+---
+
+# Controls
+
+| Tecla         | Acció                    |
+| ------------- | ------------------------ |
+| W A S D       | Moviment                 |
+| Espai         | Saltar                   |
+| Ratolí        | Mirar                    |
+| Clic esquerre | Atacar                   |
+| E             | Interactuar amb objectes |
+
+---
+
+# Tecnologies utilitzades
+
+| Tecnologia          | Ús                            |
+| ------------------- | ----------------------------- |
+| Lua                 | Programació principal         |
+| Garry's Mod         | Plataforma de desenvolupament |
+| Source Engine       | Motor gràfic                  |
+| Visual Studio Code  | Entorn de desenvolupament     |
+| Sistema Net de GMod | Comunicació client-servidor   |
+| NPCs de Half-Life 2 | Sistema d'enemics             |
+
+---
+
+# Arquitectura del projecte
+
+El projecte està dividit en diversos sistemes independents.
+
+## Core Survival System
+
+Gestiona:
+
+* Salut
+* Gana
+* Energia
+* Mort del jugador
+
+## Movement Event System
+
+Gestiona:
+
+* Distància recorreguda
+* Activació d'esdeveniments
+* Generació de recursos
+
+## Difficulty Manager
+
+Gestiona:
+
+* Escalat de dificultat
+* Salut dels enemics
+* Oleades
+* Selecció de NPCs
+
+## Safe Spawn System
+
+Gestiona:
+
+* Validació de posicions
+* Raycasts
+* Prevenció d'encallaments
+
+## Combat Reward System
+
+Gestiona:
+
+* Detecció de baixes
+* Reompliment de munició
+
+## Client HUD System
+
+Gestiona:
+
+* HUD
+* Barres animades amb Lerp
+* Notificacions Rainbow
+
+---
+
+# Diagrama de classes
 
 ```mermaid
 classDiagram
-
-class GameManager {
-  -gameState
-  -score
-  -currentEvent
-  +startGame()
-  +update()
-  +endGame()
-}
-
-class PlayerStats {
-  -health
-  -hunger
-  -energy
-  +updateStats()
-  +isAlive()
-}
-
-class TickSystem {
-  -interval
-  +startTick()
-  +stopTick()
-  +applyTick()
-}
-
-class ActionSystem {
-  +eat()
-  +sleep()
-  +explore()
-}
-
-class EventSystem {
-  +triggerEvent()
-  +applyEffect()
-}
-
-class HUD {
-  +render()
-  +updateUI()
-}
-
-GameManager --> PlayerStats
-GameManager --> TickSystem
-GameManager --> ActionSystem
-GameManager --> EventSystem
-GameManager --> HUD
-
-TickSystem --> PlayerStats
-ActionSystem --> PlayerStats
-EventSystem --> PlayerStats
-HUD --> PlayerStats
+class SurvivalSystem
+class MovementTracker
+class EventSystem
+class SafeSpawnSystem
+class DifficultyManager
+class CombatSystem
+class HUDSystem
+class RainbowMessageSystem
+class Player
 ```
-
-L’arquitectura separa clarament les responsabilitats. `GameManager` coordina el flux global del joc. `PlayerStats` controla l’estat vital del jugador. `TickSystem` regula el pas del temps i la degradació de recursos. `ActionSystem` encapsula les accions disponibles. `EventSystem` introdueix variabilitat i risc. `HUD` mostra l’estat al jugador. Aquesta estructura facilita el manteniment i permet ampliar el joc sense trencar la lògica existent.
 
 ---
 
-## 🔄 Diagrama de comportament
+# Diagrama de comportament
 
 ```mermaid
 flowchart TD
-
-A[Start Game] --> B[Inicialitzar GameManager]
-B --> C[Iniciar TickSystem]
-
-C --> D[Aplicar Tick: baixar stats]
-D --> E{Jugador tria acció}
-
-E -->|Menjar| F[Aplicar efectes]
-E -->|Dormir| G[Aplicar efectes]
-E -->|Explorar| H[Resultat aleatori]
-
-F --> I[Actualizar stats]
-G --> I
-H --> I
-
-I --> J{Event aleatori?}
-
-J -->|Sí| K[Trigger Event]
-J -->|No| L[Continuar]
-
-K --> M[Aplicar efecte]
-M --> N[Actualizar stats]
-
-L --> N
-
-N --> O[Actualizar score]
-
-O --> P{Salut > 0?}
-
-P -->|Sí| D
-P -->|No| Q[Game Over]
-
-Q --> R[Mostrar resultats]
+A[Inici de partida] --> B[Inicialitzar estadístiques]
+B --> C[Començar temporitzadors]
+C --> D[Aplicar degradació]
+D --> E{Jugador viu?}
+E -- No --> Z[Game Over]
+E -- Sí --> F[Mesurar distància]
+F --> G{Objectiu assolit?}
+G -- No --> D
+G -- Sí --> H[Generar esdeveniment]
 ```
 
-El joc funciona en un bucle continu basat en ticks. Cada iteració redueix les estadístiques i obliga el jugador a prendre decisions. Les accions poden modificar l’estat i activar esdeveniments aleatoris. Després de cada cicle es comprova la supervivència. Si la salut arriba a zero, el joc finalitza. Aquest flux manté una pressió constant i converteix la gestió de recursos en el centre del gameplay.
+---
+
+# Instal·lació
+
+## Requisits previs
+
+* Garry's Mod instal·lat.
+* Steam actualitzat.
+* Accés a una partida local.
+
+## Instal·lació
+
+1. Descarregar o clonar el repositori.
+2. Copiar la carpeta de l'addon dins:
+
+```text
+garrysmod/addons/
+```
+
+3. Iniciar Garry's Mod.
+4. Crear una partida.
+5. Verificar que l'addon es carrega correctament.
+
+---
+
+# Execució
+
+1. Iniciar una partida de Garry's Mod.
+2. Carregar qualsevol mapa compatible.
+3. El sistema començarà automàticament.
+4. Sobreviure el màxim temps possible.
+
+---
+
+# Limitacions conegudes
+
+* Sense suport multijugador.
+* Sense inventari tradicional.
+* Sense sistema RPG.
+* Utilitza IA nativa de Half-Life 2.
+* Centrat exclusivament en supervivència, exploració i combat.
+
+---
+
+# Autor
+
+Afegir nom de l'autor.
+
+---
+
+# Aspectes pendents
+
+Abans de l'entrega final es recomana afegir:
+
+* Enllaç al vídeo de gameplay.
+* Captures de pantalla del joc.
+* Nom de l'autor.
+* Estructura real de carpetes del projecte.
+* Enllaç al repositori definitiu.
+* Instruccions específiques si existeixen dependències addicionals.
+* Llicència del projecte (opcional).
